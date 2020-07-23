@@ -13,17 +13,7 @@ use soundpipe::ffi::{
 
 #[derive(Clone)]
 struct Soundpipe {
-    sp: Rc<*mut sp_data>,
-}
-
-trait SoundpipeTrait {
-    fn bl_saw(&self) -> BlSaw;
-}
-
-impl SoundpipeTrait for Soundpipe {
-    fn bl_saw(&self) -> BlSaw {
-        BlSaw::new(self.clone())
-    }
+    sp_ffi: Rc<*mut sp_data>,
 }
 
 unsafe impl Send for Soundpipe {}
@@ -35,36 +25,40 @@ impl Soundpipe {
             sp_create(&mut sp);
             (*sp).sr = sample_rate;
         }
-        Soundpipe { sp: Rc::new(sp) }
+        Soundpipe { sp_ffi: Rc::new(sp) }
+    }
+
+    fn bl_saw(&self) -> BlSaw {
+        BlSaw::new(self.clone())
     }
 }
 
 struct BlSaw {
     sp: Soundpipe,
-    raw: *mut sp_blsaw,
+    ffi: *mut sp_blsaw,
 }
 
 unsafe impl Send for BlSaw {}
 
 impl BlSaw {
     fn new(sp: Soundpipe) -> Self {
-        let mut result = BlSaw { sp: sp, raw: null_mut() };
+        let mut result = BlSaw { sp: sp, ffi: null_mut() };
         unsafe {
-            sp_blsaw_create(&mut result.raw);
-            sp_blsaw_init(*result.sp.sp, result.raw);
+            sp_blsaw_create(&mut result.ffi);
+            sp_blsaw_init(*result.sp.sp_ffi, result.ffi);
         }
         result
     }
 
     fn set_freq(&self, freq: f32) {
         unsafe {
-            *(*self.raw).freq = freq;
+            *(*self.ffi).freq = freq;
         }
     }
 
     fn set_amp(&self, amp: f32) {
         unsafe {
-            *(*self.raw).amp = amp;
+            *(*self.ffi).amp = amp;
         }
     }
 
@@ -72,7 +66,7 @@ impl BlSaw {
         let mut out: f32 = 0.0;
         let null = null_mut();
         unsafe {
-            sp_blsaw_compute(*self.sp.sp, self.raw, null, &mut out);
+            sp_blsaw_compute(*self.sp.sp_ffi, self.ffi, null, &mut out);
         }
         out
     }

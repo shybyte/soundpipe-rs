@@ -7,9 +7,7 @@ use std::rc::Rc;
 use cpal::{Device, SupportedStreamConfig};
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 
-use soundpipe::ffi::{
-    sp_blsaw, sp_blsaw_compute, sp_blsaw_create, sp_blsaw_init, sp_create, sp_data,
-};
+use soundpipe::ffi::{sp_blsaw, sp_blsaw_compute, sp_blsaw_create, sp_blsaw_destroy, sp_blsaw_init, sp_create, sp_data, sp_destroy};
 
 #[derive(Clone)]
 struct Soundpipe {
@@ -30,6 +28,17 @@ impl Soundpipe {
 
     fn bl_saw(&self) -> BlSaw {
         BlSaw::new(self.clone())
+    }
+}
+
+
+impl Drop for Soundpipe {
+    fn drop(&mut self) {
+        if let Some(sp) = Rc::get_mut(&mut self.sp_ffi) {
+            unsafe {
+                sp_destroy(sp);
+            }
+        }
     }
 }
 
@@ -69,6 +78,14 @@ impl BlSaw {
             sp_blsaw_compute(*self.sp.sp_ffi, self.ffi, null, &mut out);
         }
         out
+    }
+}
+
+impl Drop for BlSaw {
+    fn drop(&mut self) {
+        unsafe {
+            sp_blsaw_destroy(&mut self.ffi);
+        }
     }
 }
 

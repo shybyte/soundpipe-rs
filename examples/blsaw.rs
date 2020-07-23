@@ -2,43 +2,56 @@ extern crate anyhow;
 extern crate cpal;
 
 use std::ptr::null_mut;
+use std::rc::Rc;
 
-use cpal::{Device, StreamConfig, SupportedStreamConfig};
+use cpal::{Device, SupportedStreamConfig};
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 
 use soundpipe::ffi::{
     sp_blsaw, sp_blsaw_compute, sp_blsaw_create, sp_blsaw_init, sp_create, sp_data,
 };
 
+#[derive(Clone)]
 struct Soundpipe {
-    sp: *mut sp_data,
+    sp: Rc<*mut sp_data>,
+}
+
+trait SoundpipeTrait {
+    fn bl_saw(&self) -> BlSaw;
+}
+
+impl SoundpipeTrait for Soundpipe {
+    fn bl_saw(&self) -> BlSaw {
+        BlSaw::new(self.clone())
+    }
 }
 
 unsafe impl Send for Soundpipe {}
 
 impl Soundpipe {
     fn new(sample_rate: i32) -> Self {
-        let mut sp = Soundpipe { sp: null_mut() };
+        let mut sp = null_mut();
         unsafe {
-            sp_create(&mut sp.sp);
-            (*sp.sp).sr = sample_rate;
+            sp_create(&mut sp);
+            (*sp).sr = sample_rate;
         }
-        sp
+        Soundpipe { sp: Rc::new(sp) }
     }
 }
 
 struct BlSaw {
+    sp: Soundpipe,
     raw: *mut sp_blsaw,
 }
 
 unsafe impl Send for BlSaw {}
 
 impl BlSaw {
-    fn new(sp: &Soundpipe) -> Self {
-        let mut result = BlSaw { raw: null_mut() };
+    fn new(sp: Soundpipe) -> Self {
+        let mut result = BlSaw { sp: sp, raw: null_mut() };
         unsafe {
             sp_blsaw_create(&mut result.raw);
-            sp_blsaw_init(sp.sp, result.raw);
+            sp_blsaw_init(*result.sp.sp, result.raw);
         }
         result
     }
@@ -55,11 +68,11 @@ impl BlSaw {
         }
     }
 
-    fn compute(&self, sp: &Soundpipe) -> f32 {
+    fn compute(&self) -> f32 {
         let mut out: f32 = 0.0;
         let null = null_mut();
         unsafe {
-            sp_blsaw_compute(sp.sp, self.raw, null, &mut out);
+            sp_blsaw_compute(*self.sp.sp, self.raw, null, &mut out);
         }
         out
     }
@@ -95,12 +108,14 @@ fn run<T>(device: &cpal::Device, config: &cpal::StreamConfig) -> Result<(), anyh
     eprintln!("channels = {:?}", channels);
 
     let sp = Soundpipe::new(sample_rate as i32);
-    let bl_saw = BlSaw::new(&sp);
+    let bl_saw = sp.bl_saw();
+    let bl_saw2 = sp.bl_saw();
 
     bl_saw.set_freq(220.0);
+    bl_saw2.set_freq(110.0);
 
     let mut next_value = move || {
-        bl_saw.compute(&sp)
+        (bl_saw.compute() + bl_saw2.compute()) / 2.0
     };
 
     let err_fn = |err| eprintln!("an error occurred on stream: {}", err);

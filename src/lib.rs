@@ -47,7 +47,7 @@ unsafe impl Send for BlSaw {}
 
 impl BlSaw {
     fn new(sp: Soundpipe) -> Self {
-        let mut result = BlSaw { sp: sp, ffi: null_mut() };
+        let mut result = BlSaw { sp, ffi: null_mut() };
         unsafe {
             sp_blsaw_create(&mut result.ffi);
             sp_blsaw_init(*result.sp.sp_ffi, result.ffi);
@@ -61,7 +61,7 @@ impl BlSaw {
         }
     }
 
-    fn set_amp(&self, amp: f32) {
+    pub fn set_amp(&self, amp: f32) {
         unsafe {
             *(*self.ffi).amp = amp;
         }

@@ -7,8 +7,8 @@ include!(concat!("ffi-generated.rs"));
 
 #[cfg(test)]
 mod tests {
-    use crate::ffi::{sp_blsaw_compute, sp_blsaw_create, sp_blsaw_init, sp_create, sp_data};
-    use std::ptr::{null, null_mut};
+    use crate::ffi::{sp_blsaw_compute, sp_blsaw_create, sp_blsaw_init, sp_create};
+    use std::ptr::{null_mut};
 
     #[test]
     fn it_works() {

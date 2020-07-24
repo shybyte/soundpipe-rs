@@ -4,7 +4,9 @@ extern crate cpal;
 use cpal::{Device, SupportedStreamConfig};
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 
-use soundpipe::Soundpipe;
+use soundpipe::soundpipe::Soundpipe;
+use soundpipe::factory::Factory;
+
 
 fn main() -> Result<(), anyhow::Error> {
     let host = cpal::default_host();

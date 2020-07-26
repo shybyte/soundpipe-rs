@@ -1,12 +1,11 @@
 extern crate anyhow;
 extern crate cpal;
 
-use cpal::{Device, SupportedStreamConfig};
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use cpal::{Device, SupportedStreamConfig};
 
-use soundpipe::soundpipe::Soundpipe;
-use soundpipe::factory::Factory;
-
+use soundpipe::Soundpipe;
+use soundpipe::SoundpipeFactory;
 
 fn main() -> Result<(), anyhow::Error> {
     let host = cpal::default_host();
@@ -27,8 +26,8 @@ fn main() -> Result<(), anyhow::Error> {
 }
 
 fn run<T>(device: &cpal::Device, config: &cpal::StreamConfig) -> Result<(), anyhow::Error>
-    where
-        T: cpal::Sample,
+where
+    T: cpal::Sample,
 {
     let sample_rate = config.sample_rate.0 as f32;
     let channels = config.channels as usize;
@@ -43,9 +42,7 @@ fn run<T>(device: &cpal::Device, config: &cpal::StreamConfig) -> Result<(), anyh
     bl_saw.set_freq(220.0);
     bl_saw2.set_freq(110.0);
 
-    let mut next_value = move || {
-        (bl_saw.compute() + bl_saw2.compute()) / 2.0
-    };
+    let mut next_value = move || (bl_saw.compute() + bl_saw2.compute()) / 2.0;
 
     let err_fn = |err| eprintln!("an error occurred on stream: {}", err);
 
@@ -64,8 +61,8 @@ fn run<T>(device: &cpal::Device, config: &cpal::StreamConfig) -> Result<(), anyh
 }
 
 fn write_data<T>(output: &mut [T], channels: usize, next_sample: &mut dyn FnMut() -> f32)
-    where
-        T: cpal::Sample,
+where
+    T: cpal::Sample,
 {
     for frame in output.chunks_mut(channels) {
         let value: T = cpal::Sample::from::<f32>(&next_sample());

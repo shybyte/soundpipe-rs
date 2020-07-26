@@ -1,8 +1,10 @@
-pub mod ffi;
-pub mod ugens;
-pub mod soundpipe;
 pub mod factory;
+pub mod ffi;
+pub mod soundpipe;
+pub mod ugens;
 
+pub use factory::Factory as SoundpipeFactory;
+pub use soundpipe::Soundpipe;
 
 #[cfg(test)]
 mod tests {

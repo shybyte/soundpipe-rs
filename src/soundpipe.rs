@@ -1,7 +1,7 @@
-use crate::ffi::sp_create;
-use std::rc::Rc;
+use crate::ffi::{sp_create, sp_midi2cps};
 use crate::ffi::{sp_data, sp_destroy};
 use std::ptr::null_mut;
+use std::rc::Rc;
 
 #[derive(Clone)]
 pub struct Soundpipe {
@@ -17,10 +17,11 @@ impl Soundpipe {
             sp_create(&mut sp);
             (*sp).sr = sample_rate;
         }
-        Soundpipe { sp_ffi: Rc::new(sp) }
+        Soundpipe {
+            sp_ffi: Rc::new(sp),
+        }
     }
 }
-
 
 impl Drop for Soundpipe {
     fn drop(&mut self) {
@@ -30,4 +31,8 @@ impl Drop for Soundpipe {
             }
         }
     }
+}
+
+pub fn midi2cps(midi_note: f32) -> f32 {
+    unsafe { sp_midi2cps(midi_note) }
 }

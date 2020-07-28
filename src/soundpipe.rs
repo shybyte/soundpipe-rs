@@ -5,7 +5,7 @@ use std::rc::Rc;
 
 #[derive(Clone)]
 pub struct Soundpipe {
-    pub sp_ffi: Rc<*mut sp_data>,
+    pub(crate) sp_ffi: Rc<*mut sp_data>,
 }
 
 unsafe impl Send for Soundpipe {}

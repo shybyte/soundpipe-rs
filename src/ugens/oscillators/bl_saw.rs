@@ -1,8 +1,15 @@
 use std::ptr::null_mut;
+use soundpipe_derive::HelloMacro;
+
 
 use crate::ffi::{sp_blsaw, sp_blsaw_compute, sp_blsaw_create, sp_blsaw_destroy, sp_blsaw_init};
 use crate::soundpipe::Soundpipe;
 
+pub trait HelloMacro {
+    fn hello_macro();
+}
+
+#[derive(HelloMacro)]
 pub struct BlSaw {
     sp: Soundpipe,
     ffi: *mut sp_blsaw,
@@ -12,6 +19,7 @@ unsafe impl Send for BlSaw {}
 
 impl BlSaw {
     pub fn new(sp: Soundpipe) -> Self {
+        BlSaw::hello_macro();
         let mut result = BlSaw {
             sp,
             ffi: null_mut(),

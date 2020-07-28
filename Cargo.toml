@@ -7,10 +7,8 @@ license = "MIT"
 build = "build.rs"
 links = "soundpipe"
 
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+soundpipe_derive = { path = "soundpipe_derive" }
 
 [dev-dependencies]
 midir = { git = "https://github.com/shybyte/midir" }

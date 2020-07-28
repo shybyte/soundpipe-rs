@@ -41,7 +41,14 @@ impl Revsc {
         let mut out_left: f32 = 0.0;
         let mut out_right: f32 = 0.0;
         unsafe {
-            sp_revsc_compute(*self.sp.sp_ffi, self.ffi, &mut in_left, &mut in_right, &mut out_left, &mut out_right);
+            sp_revsc_compute(
+                *self.sp.sp_ffi,
+                self.ffi,
+                &mut in_left,
+                &mut in_right,
+                &mut out_left,
+                &mut out_right,
+            );
         }
         (out_left, out_right)
     }

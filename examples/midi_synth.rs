@@ -5,17 +5,17 @@ extern crate midir;
 
 use std::sync::mpsc;
 
-use cpal::{Device, SupportedStreamConfig};
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use cpal::{Device, SupportedStreamConfig};
 use midi_message::MidiMessage;
 use midir::{Ignore, MidiInput};
 
+use soundpipe::soundpipe::midi2cps;
 use soundpipe::Soundpipe;
 use soundpipe::SoundpipeFactory;
-use soundpipe::soundpipe::midi2cps;
 
 struct SynthState {
-    gate: f32
+    gate: f32,
 }
 
 fn main() -> Result<(), anyhow::Error> {
@@ -37,8 +37,8 @@ fn main() -> Result<(), anyhow::Error> {
 }
 
 fn run<T>(device: &cpal::Device, config: &cpal::StreamConfig) -> Result<(), anyhow::Error>
-    where
-        T: cpal::Sample,
+where
+    T: cpal::Sample,
 {
     let mut midi_in = MidiInput::new("midir reading input")?;
     midi_in.ignore(Ignore::None);
@@ -103,27 +103,33 @@ fn run<T>(device: &cpal::Device, config: &cpal::StreamConfig) -> Result<(), anyh
         config,
         move |data: &mut [T], _: &cpal::OutputCallbackInfo| {
             if let Ok(midi_message) = midi_rx.try_recv() {
-                eprintln!("midi_message = {:?}, data.len = {:?}", midi_message, data.len());
+                eprintln!(
+                    "midi_message = {:?}, data.len = {:?}",
+                    midi_message,
+                    data.len()
+                );
                 match midi_message {
                     MidiMessage::NoteOn(_, midi_note, _) => {
                         let freq = midi2cps(midi_note as f32);
                         bl_saw.set_freq(freq);
-                        bl_saw2 .set_freq(freq);
+                        bl_saw2.set_freq(freq);
                         synth_state.gate = 1.0;
                     }
                     MidiMessage::NoteOff(_, _, _) => {
                         synth_state.gate = 0.0;
-                    },
+                    }
                     _ => {}
                 }
             }
             for frame in data.chunks_mut(channels) {
-                let mono = (bl_saw.compute() + bl_saw2.compute()) / 2.0 * adsr.compute(synth_state.gate);
+                let mono = (bl_saw.compute() + bl_saw2.compute()) / 2.0
+                    * adsr.compute(synth_state.gate)
+                    * 0.7;
                 let reverbed = revsc.compute(mono, mono);
-                let left= (mono + reverbed.0) / 2.0;
+                let left = (mono + reverbed.0) / 2.0;
                 let right = (mono + reverbed.1) / 2.0;
-                frame[0]= cpal::Sample::from::<f32>(&left);
-                frame[1]= cpal::Sample::from::<f32>(&right);
+                frame[0] = cpal::Sample::from::<f32>(&left);
+                frame[1] = cpal::Sample::from::<f32>(&right);
             }
         },
         err_fn,

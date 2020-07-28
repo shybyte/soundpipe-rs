@@ -1,7 +1,7 @@
 use crate::soundpipe::Soundpipe;
+use crate::ugens::effects::revsc::Revsc;
 use crate::ugens::envelopes::adsr::Adsr;
 use crate::ugens::oscillators::bl_saw::BlSaw;
-use crate::ugens::effects::revsc::Revsc;
 
 pub trait Factory {
     fn bl_saw(&self) -> BlSaw;

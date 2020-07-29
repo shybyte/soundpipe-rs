@@ -5,9 +5,9 @@ use crate::ffi::{
     sp_blsquare, sp_blsquare_compute, sp_blsquare_create, sp_blsquare_destroy, sp_blsquare_init,
 };
 use crate::soundpipe::Soundpipe;
+use crate::ugens::ugen::MonoOsc;
 
 #[derive(UGenMacro,OscillatorMacro)]
-
 pub struct BlSquare {
     sp: Soundpipe,
     ffi: *mut sp_blsquare,
@@ -26,3 +26,5 @@ impl BlSquare {
         }
     }
 }
+
+impl MonoOsc for BlSquare {}

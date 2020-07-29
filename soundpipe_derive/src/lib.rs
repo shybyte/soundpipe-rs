@@ -42,6 +42,8 @@ fn impl_ugen_macro(ast: &syn::DeriveInput) -> TokenStream {
 
         unsafe impl Send for #name {}
 
+        impl crate::ugens::ugen::UGen for #name {}
+
         impl Drop for #name {
              fn drop(&mut self) {
                 unsafe {
@@ -70,8 +72,8 @@ fn impl_oscillator_macro(ast: &syn::DeriveInput) -> TokenStream {
     let compute_fn = format_ident!("sp_{}_compute", name_lowercase);
 
     let gen = quote! {
-        impl #name {
-                pub fn compute(&self) -> f32 {
+        impl crate::ugens::ugen::MonoOscInternal for #name {
+                fn compute_internal(&self) -> f32 {
                     let mut out: f32 = 0.0;
                     let null = null_mut();
                     unsafe {

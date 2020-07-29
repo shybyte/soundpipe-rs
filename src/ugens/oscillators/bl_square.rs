@@ -1,16 +1,19 @@
 use soundpipe_derive::{UGenMacro, OscillatorMacro};
 use std::ptr::null_mut;
 
-use crate::ffi::{sp_blsaw, sp_blsaw_compute, sp_blsaw_create, sp_blsaw_destroy, sp_blsaw_init};
+use crate::ffi::{
+    sp_blsquare, sp_blsquare_compute, sp_blsquare_create, sp_blsquare_destroy, sp_blsquare_init,
+};
 use crate::soundpipe::Soundpipe;
 
 #[derive(UGenMacro,OscillatorMacro)]
-pub struct BlSaw {
+
+pub struct BlSquare {
     sp: Soundpipe,
-    ffi: *mut sp_blsaw,
+    ffi: *mut sp_blsquare,
 }
 
-impl BlSaw {
+impl BlSquare {
     pub fn set_freq(&self, freq: f32) {
         unsafe {
             *(*self.ffi).freq = freq;

@@ -5,7 +5,7 @@ use crate::ffi::{
     sp_blsquare, sp_blsquare_compute, sp_blsquare_create, sp_blsquare_destroy, sp_blsquare_init,
 };
 use crate::soundpipe::Soundpipe;
-use crate::ugens::ugen::MonoOsc;
+use crate::ugens::oscillators::common::MonoOsc;
 
 #[derive(UGenMacro,OscillatorMacro)]
 pub struct BlSquare {

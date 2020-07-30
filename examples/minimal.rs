@@ -1,6 +1,6 @@
 use soundpipe::factory::Factory;
 use soundpipe::Soundpipe;
-use soundpipe::ugens::ugen::MonoOsc;
+use soundpipe::ugens::oscillators::common::MonoOsc;
 
 fn main() {
     let soundpipe = Soundpipe::new(44100);

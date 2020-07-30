@@ -22,12 +22,16 @@ impl Adsr {
         }
     }
 
+    pub fn compute_internal(&self, input: &mut f32, output: &mut f32)  {
+        unsafe {
+            sp_adsr_compute(*self.sp.sp_ffi, self.ffi, input, output);
+        }
+    }
+
     pub fn compute(&self, input: f32) -> f32 {
         let mut out: f32 = 0.0;
         let mut input = input;
-        unsafe {
-            sp_adsr_compute(*self.sp.sp_ffi, self.ffi, &mut input, &mut out);
-        }
+        self.compute_internal(&mut input, &mut out);
         out
     }
 }

@@ -22,21 +22,25 @@ impl Revsc {
         }
     }
 
+    pub fn compute_internal(&self, in_left: &mut f32, in_right: &mut f32, out_left: &mut f32, out_right: &mut f32) {
+        unsafe {
+            sp_revsc_compute(
+                *self.sp.sp_ffi,
+                self.ffi,
+                in_left,
+                in_right,
+                out_left,
+                out_right,
+            );
+        }
+    }
+
     pub fn compute(&self, in_left: f32, in_right: f32) -> (f32, f32) {
         let mut in_left: f32 = in_left;
         let mut in_right: f32 = in_right;
         let mut out_left: f32 = 0.0;
         let mut out_right: f32 = 0.0;
-        unsafe {
-            sp_revsc_compute(
-                *self.sp.sp_ffi,
-                self.ffi,
-                &mut in_left,
-                &mut in_right,
-                &mut out_left,
-                &mut out_right,
-            );
-        }
+        self.compute_internal(&mut in_left, &mut in_right, &mut out_left, &mut out_right);
         (out_left, out_right)
     }
 }

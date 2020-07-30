@@ -72,7 +72,7 @@ fn impl_oscillator_macro(ast: &syn::DeriveInput) -> TokenStream {
     let compute_fn = format_ident!("sp_{}_compute", name_lowercase);
 
     let gen = quote! {
-        impl crate::ugens::ugen::MonoOscInternal for #name {
+        impl crate::ugens::oscillators::common::MonoOscInternal for #name {
                 fn compute_internal(&self) -> f32 {
                     let mut out: f32 = 0.0;
                     let null = null_mut();

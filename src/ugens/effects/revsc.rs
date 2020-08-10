@@ -22,7 +22,13 @@ impl Revsc {
         }
     }
 
-    pub fn compute_internal(&self, in_left: &mut f32, in_right: &mut f32, out_left: &mut f32, out_right: &mut f32) {
+    pub fn compute_internal(
+        &self,
+        in_left: &mut f32,
+        in_right: &mut f32,
+        out_left: &mut f32,
+        out_right: &mut f32,
+    ) {
         unsafe {
             sp_revsc_compute(
                 *self.sp.sp_ffi,

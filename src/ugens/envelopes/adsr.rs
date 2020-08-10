@@ -22,7 +22,7 @@ impl Adsr {
         }
     }
 
-    pub fn compute_internal(&self, input: &mut f32, output: &mut f32)  {
+    pub fn compute_internal(&self, input: &mut f32, output: &mut f32) {
         unsafe {
             sp_adsr_compute(*self.sp.sp_ffi, self.ffi, input, output);
         }

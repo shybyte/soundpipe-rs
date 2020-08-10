@@ -1,4 +1,4 @@
-use soundpipe_derive::{UGenMacro, OscillatorMacro};
+use soundpipe_derive::{OscillatorMacro, UGenMacro};
 use std::ptr::null_mut;
 
 use crate::ffi::{
@@ -7,7 +7,7 @@ use crate::ffi::{
 use crate::soundpipe::Soundpipe;
 use crate::ugens::oscillators::common::MonoOsc;
 
-#[derive(UGenMacro,OscillatorMacro)]
+#[derive(UGenMacro, OscillatorMacro)]
 pub struct BlSquare {
     sp: Soundpipe,
     ffi: *mut sp_blsquare,

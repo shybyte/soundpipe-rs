@@ -1,6 +1,7 @@
 use crate::soundpipe::Soundpipe;
 use crate::ugens::effects::revsc::Revsc;
 use crate::ugens::envelopes::adsr::Adsr;
+use crate::ugens::filter::wp_korg_35::WpKorg35;
 use crate::ugens::oscillators::bl_saw::BlSaw;
 use crate::ugens::oscillators::bl_square::BlSquare;
 use crate::ugens::port::Port;
@@ -11,6 +12,7 @@ pub trait Factory {
     fn adsr(&self) -> Adsr;
     fn revsc(&self) -> Revsc;
     fn port(&self, htime: f32) -> Port;
+    fn wpkorg35(&self) -> WpKorg35;
 }
 
 impl Factory for Soundpipe {
@@ -32,5 +34,9 @@ impl Factory for Soundpipe {
 
     fn port(&self, htime: f32) -> Port {
         Port::new(self.clone(), htime)
+    }
+
+    fn wpkorg35(&self) -> WpKorg35 {
+        WpKorg35::new(self.clone())
     }
 }

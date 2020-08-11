@@ -1,4 +1,6 @@
-* Expon or port => Portamento
+TODO: 
+* wpkorg35
+* Expon 
 * Crossfade
 * Comb
 * Pulse width
@@ -9,3 +11,6 @@
 * pdhalf
 * reson
 * tbvcf
+
+Done: 
+* port

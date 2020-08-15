@@ -22,6 +22,20 @@ impl Adsr {
         }
     }
 
+    pub fn set_release_time(&self, time_in_seconds: f32) {
+        unsafe {
+            (*self.ffi).rel = time_in_seconds;
+        }
+    }
+
+    /// level is in 0-1
+    pub fn set_sustain_level(&self, level: f32) {
+        unsafe {
+            (*self.ffi).sus = level;
+        }
+    }
+
+
     pub fn compute_internal(&self, input: &mut f32, output: &mut f32) {
         unsafe {
             sp_adsr_compute(*self.sp.sp_ffi, self.ffi, input, output);

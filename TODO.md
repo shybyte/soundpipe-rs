@@ -1,5 +1,4 @@
 TODO: 
-* Expon 
 * Crossfade
 * Comb
 * Pulse width
@@ -10,6 +9,7 @@ TODO:
 * pdhalf
 * reson
 * tbvcf
+* Expon ?
 
 Done: 
 * wpkorg35

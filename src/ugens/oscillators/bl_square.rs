@@ -14,15 +14,21 @@ pub struct BlSquare {
 }
 
 impl BlSquare {
-    pub fn set_freq(&self, freq: f32) {
+    pub fn set_freq(&mut self, freq: f32) {
         unsafe {
             *(*self.ffi).freq = freq;
         }
     }
 
-    pub fn set_amp(&self, amp: f32) {
+    pub fn set_amp(&mut self, amp: f32) {
         unsafe {
             *(*self.ffi).amp = amp;
+        }
+    }
+
+    pub fn set_width(&mut self, width: f32) {
+        unsafe {
+            *(*self.ffi).width = width;
         }
     }
 }

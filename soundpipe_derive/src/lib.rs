@@ -4,7 +4,6 @@ use proc_macro::TokenStream;
 
 use quote::format_ident;
 use quote::quote;
-use syn;
 
 #[proc_macro_derive(UGenMacro)]
 pub fn ugen_macro_derive(input: TokenStream) -> TokenStream {
